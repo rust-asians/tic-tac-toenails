@@ -1,4 +1,11 @@
+mod mark;
+mod position;
+mod grid;
+mod needs_redraw;
+
 use bevy::prelude::*;
+use crate::mark::Mark;
+use crate::position::Position;
 
 fn main() {
     App::new()
@@ -9,17 +16,6 @@ fn main() {
         .run();
 }
 
-#[derive(Component)]
-struct Mark {
-    id: u8,
-}
-
-#[derive(Component)]
-struct Position {
-    x: u8,
-    y: u8,
-}
-
 fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -27,21 +23,24 @@ fn setup(
 ) {
     commands.spawn(Camera2d);
     let shape = meshes.add(Rectangle::new(50.0, 50.0));
-    commands.spawn((Mesh2d(shape), MeshMaterial2d(materials.add(Color::hsl(360f32, 0.95, 0.7)))));
+    commands.spawn((
+        Mesh2d(shape),
+        MeshMaterial2d(materials.add(Color::hsl(360f32, 0.95, 0.7))),
+    ));
 }
 
 fn create_dummy_grid(mut commands: Commands) {
-    commands.spawn((Mark { id:1 }, Position { x: 0, y: 0 }));
-    commands.spawn((Mark { id:2 }, Position { x: 0, y: 1 }));
-    commands.spawn((Mark { id:2 }, Position { x: 0, y: 2 }));
+    commands.spawn((Mark { id: 1 }, Position { x: 0, y: 0 }));
+    commands.spawn((Mark { id: 2 }, Position { x: 0, y: 1 }));
+    commands.spawn((Mark { id: 2 }, Position { x: 0, y: 2 }));
 
-    commands.spawn((Mark { id:2 }, Position { x: 1, y: 0 }));
-    commands.spawn((Mark { id:1 }, Position { x: 1, y: 1 }));
-    commands.spawn((Mark { id:1 }, Position { x: 1, y: 2 }));
+    commands.spawn((Mark { id: 2 }, Position { x: 1, y: 0 }));
+    commands.spawn((Mark { id: 1 }, Position { x: 1, y: 1 }));
+    commands.spawn((Mark { id: 1 }, Position { x: 1, y: 2 }));
 
-    commands.spawn((Mark { id:1 }, Position { x: 2, y: 0 }));
-    commands.spawn((Mark { id:2 }, Position { x: 2, y: 1 }));
-    commands.spawn((Mark { id:1 }, Position { x: 2, y: 2 }));
+    commands.spawn((Mark { id: 1 }, Position { x: 2, y: 0 }));
+    commands.spawn((Mark { id: 2 }, Position { x: 2, y: 1 }));
+    commands.spawn((Mark { id: 1 }, Position { x: 2, y: 2 }));
 }
 
 fn draw_grid(
