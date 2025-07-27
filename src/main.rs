@@ -2,6 +2,7 @@ mod mark;
 mod position;
 mod grid;
 mod needs_redraw;
+mod dimension;
 
 use bevy::prelude::*;
 use crate::mark::Mark;
