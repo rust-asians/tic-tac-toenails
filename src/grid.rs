@@ -34,8 +34,38 @@ const GRID_STROKE: f32 = 10.0;
 #[derive(Component)]
 struct GridLine;
 
-fn draw_grid(size: GridSize, available_space: Dimensions) {
+pub fn draw_grid(
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
+    grid_size: Res<GridSize>,
+    windows: Query<&Window>,
+) {
+    commands.spawn(Camera2d);
+    for window in windows {
+        draw_grid_lines(
+            &mut commands,
+            &mut meshes,
+            &mut materials,
+            *grid_size,
+            Dimensions {
+                width: window.width(),
+                height: window.height(),
+            },
+        )
+    }
+}
+
+fn draw_grid_lines(
+    commands: &mut Commands,
+    meshes: &mut ResMut<Assets<Mesh>>,
+    materials: &mut ResMut<Assets<ColorMaterial>>,
+    size: GridSize,
+    available_space: Dimensions,
+) {
     let cell_size = get_cell_size(size, available_space);
+    draw_grid_lines_of_axis(commands, meshes, materials, cell_size, size, Axis::X);
+    draw_grid_lines_of_axis(commands, meshes, materials, cell_size, size, Axis::Y);
 }
 
 fn get_cell_size(grid_size: GridSize, available_space: Dimensions) -> f32 {
@@ -45,6 +75,28 @@ fn get_cell_size(grid_size: GridSize, available_space: Dimensions) -> f32 {
         available_space.get(axis) / dimension_cells as f32 - GRID_STROKE * spaces as f32
     };
     dimension_cell_size(Axis::X).min(dimension_cell_size(Axis::Y))
+}
+
+fn draw_grid_lines_of_axis(
+    commands: &mut Commands,
+    meshes: &mut ResMut<Assets<Mesh>>,
+    materials: &mut ResMut<Assets<ColorMaterial>>,
+    cell_size: f32,
+    grid_size: GridSize,
+    orientation: Axis,
+) {
+    let length = cell_size * grid_size.get(orientation) as f32;
+    let offset = cell_size * grid_size.get(orientation.reversed()) as f32 / 2.0;
+    for cell in 1..grid_size.get(orientation.reversed()) {
+        draw_grid_line(
+            commands,
+            meshes,
+            materials,
+            orientation,
+            length,
+            cell_size * cell as f32 - offset,
+        );
+    }
 }
 
 fn draw_grid_line(

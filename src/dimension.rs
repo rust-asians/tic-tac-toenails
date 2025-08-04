@@ -8,6 +8,13 @@ impl Axis {
     pub fn all() -> [Axis; 2] {
         [Axis::X, Axis::Y]
     }
+
+    pub fn reversed(&self) -> Axis {
+        match self {
+            Axis::X => Axis::Y,
+            Axis::Y => Axis::X
+        }
+    }
 }
 
 #[derive(PartialEq, Copy, Clone, Debug)]
